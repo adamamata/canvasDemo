@@ -14,6 +14,12 @@ const myGameArea = {
     },
     clear: function(){ //function to clear the canvas 
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    },
+    score : function(){ //function to keep score
+        const points = Math.floor(this.frames / 10); //points = frames / 10 
+        this.context.font = '18px Arial'; //setting font and size
+        this.context.fillStyle = 'black'; //setting color
+        this.context.fillText(`Score: ${points}`, 350, 20); //setting text and position
     }
 }
 
@@ -27,6 +33,7 @@ function updateGameArea(){ // This is the main function for the game that implem
     player.update(); //update player position
     updateObstacles(); //adds obstacles
     checkGameOver(); //checks if game is over
+    myGameArea.score(); //keeps score
 }
 
 function updateObstacles(){
