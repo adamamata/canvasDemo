@@ -21,16 +21,17 @@ const myGameArea = {
 const myObstacles = [];
 
 //FUNCTIONS
-function updateGameArea(){ 
+function updateGameArea(){ // This is the main function for the game that implements all other functions
     myGameArea.clear(); //clear game area
     player.newPos(); //update player position before drawing
     player.update(); //update player position
-    updateObstacles(); 
+    updateObstacles(); //adds obstacles
+    checkGameOver(); //checks if game is over
 }
 
 function updateObstacles(){
     myGameArea.frames += 1; //incrementing property: frames
-    if (myGameArea.frames % 120 === 0){ //every 120 frames
+    if (myGameArea.frames % 40 === 0){ //every 40 frames
         let x = myGameArea.canvas.width;
         let minHeight = 20; //parameter for obstacles
         let maxHeight = 200; //parameter for obstacles
@@ -42,8 +43,18 @@ function updateObstacles(){
         myObstacles.push(new Component(10, x - height- gap,'red', x, height + gap)); //adding second obstacle to the array
     }
     for (let i = 0; i < myObstacles.length; i++){
-        myObstacles[i].x += -1; //decrements the x position of the obstacle 
+        myObstacles[i].x += -6; //decrements the x position of the obstacle 
         myObstacles[i].update(); //updates obstacle position
+    }
+}
+
+function checkGameOver(){
+    const crashed = myObstacles.some(function (obstacle) { //returns true if one of the obstacles starting point coordinates crashes with the player coordinates
+        return player.crashWidth(obstacle);
+    });
+
+    if (crashed) {
+        myGameArea.stop();
     }
 }
 
@@ -85,12 +96,12 @@ class Component {
         return this.y + this.height;
     }
     crashWidth(obstacle) { 
-        return !(this.bottom() < obstacle.top()) || this.top() > obstacle.bottom() || this.right() < obstacle.left() || this.left() > obstacle.left();
+        return !(this.bottom() < obstacle.top() || this.top() > obstacle.bottom() || this.right() < obstacle.left() || this.left() > obstacle.left());
     }
 }
 
 //PLAYER (COMPONENT)
-const player = new Component(30, 30, 'blue', 0, 110); //creating new component (w, h, color, x, y)
+const player = new Component(30, 30, 'blue', 10, 120); //creating new component (w, h, color, x, y)
 
 //PLAYER EVENT LISTENERS 
 document.addEventListener('keydown', (e) => { //Increasing speed 'keydown'
