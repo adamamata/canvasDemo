@@ -2,12 +2,15 @@
 const myGameArea = {
     canvas: document.createElement('canvas'),
     frames: 0, //to count how many times we call the updateGameArea function
-    start: function(){
+    start: function(){ //function to start the game - setting the canvas width + height, initialising the canvas, initialising this.interval 
         this.canvas.width = 480;
         this.canvas.height = 270;
         this.context = this.canvas.getContext('2d'); //Unitialising context
         document.body.insertBefore(this.canvas, document.body.childNodes[0]); //insertBefore = insterts a node before the reference child
         this.interval = setInterval(updateGameArea, 20); //updateGameArea every 20ms
+    },
+    stop: function(){ //function to stop the game by using clearInterval to stop this.interval from repeating 
+        clearInterval(this.interval);
     },
     clear: function(){ //function to clear the canvas 
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -35,8 +38,12 @@ function updateObstacles(){
         let minGap = 50; //parameter for obstacles
         let maxGap = 200; //parameter for obstacles
         let gap = Math.floor(Math.random() * (maxGap - minGap + 1) + minGap); //generate random gap within previously defined constraints
-        myObstacles.push(new Component(10, height, 'red', x, 0));
-        myObstacles.push(new Component(10, x - height- gap,'red', x, height + gap));
+        myObstacles.push(new Component(10, height, 'red', x, 0)); //adding first obstacle to the array
+        myObstacles.push(new Component(10, x - height- gap,'red', x, height + gap)); //adding second obstacle to the array
+    }
+    for (let i = 0; i < myObstacles.length; i++){
+        myObstacles[i].x += -1; //decrements the x position of the obstacle 
+        myObstacles[i].update(); //updates obstacle position
     }
 }
 
@@ -59,9 +66,26 @@ class Component {
         ctx.fillStyle = this.color;
         ctx.fillRect(this.x, this.y, this.width, this.height);
     }
-    newPos(){ //method to change position 
+    newPos() { //method to change position 
         this.x += this.speedX; //this.x = this.x + speedX
         this.y += this.speedY; //this.y = this.y + speedY
+    }
+    //Colision detection 
+    //Methods to return the current position of the component 
+    left() {
+        return this.x;
+    }
+    right() {
+        return this.x + this.width;
+    }
+    top() {
+        return this.y;
+    }
+    bottom() {
+        return this.y + this.height;
+    }
+    crashWidth(obstacle) { 
+        return !(this.bottom() < obstacle.top()) || this.top() > obstacle.bottom() || this.right() < obstacle.left() || this.left() > obstacle.left();
     }
 }
 
