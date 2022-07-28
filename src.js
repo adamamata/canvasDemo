@@ -62,6 +62,11 @@ function checkGameOver(){
 
     if (crashed) {
         myGameArea.stop();
+        document.addEventListener('keypress', (e) => {
+            if (e.keyCode === 13) {
+                window.location.reload();
+            }
+        });
     }
 }
 
